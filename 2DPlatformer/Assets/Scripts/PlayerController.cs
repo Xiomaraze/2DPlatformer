@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour
         left, right
     }
 
+    BoxCollider2D boxCollider;
+    bool contact = false;
     //a d is left right
     Rigidbody2D rb;
     public float Speed;
@@ -21,6 +23,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        boxCollider = rb.GetComponent<BoxCollider2D>();
     }
 
     // Update is called once per frame
@@ -98,9 +101,29 @@ public class PlayerController : MonoBehaviour
             return false;
         }
     }
+
+    //this section is "Are ya touching something??"
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        contact = true;
+    }
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        contact = false;
+    }
+
+    // this section is "well heres how you fall"
     public bool IsGrounded()
     {
-        return true;
+        if ((rb.velocity.y != 0) || !contact)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+        
     }
 
     public FacingDirection GetFacingDirection()
