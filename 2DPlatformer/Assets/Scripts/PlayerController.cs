@@ -89,7 +89,14 @@ public class PlayerController : MonoBehaviour
 
     public bool IsWalking()
     {
-        return false;
+        if (rb.velocity.x != 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
     public bool IsGrounded()
     {
@@ -98,6 +105,13 @@ public class PlayerController : MonoBehaviour
 
     public FacingDirection GetFacingDirection()
     {
-        return FacingDirection.left;
+        if (rb.velocity.x > 0)
+        {
+            return FacingDirection.right;
+        }
+        else
+        {
+            return FacingDirection.left;
+        }
     }
 }
