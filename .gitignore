@@ -70,3 +70,24 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+*.mp4
+*.mxf
+*.xmp
+*.pdf
+*.docx
+*.gif
+CelesteAccel.jpg
+DashCeleste.jpg
+dodgeGIF.jpg
+NRun.jpg
+Sequence 0700.jpg
+Sequence 0701.jpg
+Sequence 0702.jpg
+Sequence 0703.jpg
+Sequence 0704.jpg
+Sequence 0705.jpg
+Sequence 0706.jpg
+Sequence 0707.jpg
+Sequence 0708.jpg
+Sequence 0709.jpg
+SkidN.jpg
