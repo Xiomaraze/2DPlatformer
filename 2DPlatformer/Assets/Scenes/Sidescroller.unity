@@ -1852,10 +1852,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   contact: 0
-  Speed: 100
+  Speed: 1
   testSquare: {fileID: 1429840846}
   apexHeight: 2.53
-  apexTime: 0.34
+  apexTime: 4.08
   apexReached: 0
 --- !u!4 &1433354315
 Transform:

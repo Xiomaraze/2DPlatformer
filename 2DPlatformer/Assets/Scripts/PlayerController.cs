@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     //a d is left right
     Rigidbody2D rb;
     public float Speed;
+    float defaultSpeed = 10f;
     Vector2 leftRight;
     Vector2 jumpStart;
     Vector2 jumpTakeoff = Vector2.zero;
@@ -24,6 +25,7 @@ public class PlayerController : MonoBehaviour
 
     public float apexHeight;
     public float apexTime;
+    float jumpTime;
     public bool apexReached = false;
 
     // Start is called before the first frame update
@@ -55,22 +57,19 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            leftRight = Vector2.zero;
         }
-        leftRight = leftRight * Speed * Time.fixedDeltaTime;
+        float moveSpeed = defaultSpeed * Speed * Time.deltaTime;
+        leftRight = leftRight * moveSpeed * Time.fixedDeltaTime;
 
         if (Input.GetKey(KeyCode.Space))
         {
-            jumpMax = new Vector2 (0, apexHeight);
-            jumpStart = rb.position;
-            jumpMax = jumpMax + jumpStart;
-            Debug.Log(jumpMax);
             if (contact)
             {
                 apexReached = false;
                 jumpStart = rb.transform.position;
                 jumpMax = jumpStart + new Vector2(0, apexHeight);
-                float jumpVel = apexHeight / apexTime * Time.fixedDeltaTime;
+                jumpTime = apexTime * Time.fixedDeltaTime;
+                float jumpVel = apexHeight / jumpTime;
                 jumpTakeoff = new Vector2(0, jumpVel);
                 rb.gravityScale = 0f;
             }
@@ -133,7 +132,8 @@ public class PlayerController : MonoBehaviour
 
     private void MovementUpdate(Vector2 playerInput)
     {
-        rb.velocity = playerInput;
+        rb.AddForce(playerInput);
+        //rb.velocity = playerInput;
     }
 
     public bool IsWalking()
