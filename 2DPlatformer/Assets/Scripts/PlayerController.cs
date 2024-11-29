@@ -10,25 +10,33 @@ public class PlayerController : MonoBehaviour
     }
 
     BoxCollider2D boxCollider;
-    bool contact = false;
+    public bool contact;
     //a d is left right
     Rigidbody2D rb;
     public float Speed;
-    public float jumpHeight;
     Vector2 leftRight;
-    Vector2 jump = Vector2.zero;
     Vector2 jumpStart;
+    Vector2 jumpTakeoff = Vector2.zero;
+    Vector2 jumpMax;
+    public GameObject testSquare;
+    Rigidbody2D testDimention;
+    float gravityStore;
+
+    public float apexHeight;
+    public float apexTime;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         boxCollider = rb.GetComponent<BoxCollider2D>();
+        testDimention = testSquare.GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
+        testDimention.velocity = Vector2.up;
         //The input from the player needs to be determined and then passed in the to the MovementUpdate which should
         //manage the actual movement of the character.
         Vector2 playerInput = new Vector2();
@@ -49,22 +57,56 @@ public class PlayerController : MonoBehaviour
             leftRight = Vector2.zero;
         }
         leftRight = leftRight * Speed * Time.fixedDeltaTime;
-        //houston we have reached mach 2 (i had velocity set to += instead of just equals)
-        if (Input.GetKeyDown(KeyCode.Space))
+
+        if (Input.GetKey(KeyCode.Space))
         {
-            jumpStart = rb.position;
-            jump = Vector2.up;
+            if (contact)
+            {
+                jumpStart = rb.transform.position;
+                jumpMax = new Vector2(jumpStart.x, jumpStart.y + apexHeight);
+                Debug.Log("Start at " + jumpStart + " End at " +  jumpMax);
+                gravityStore = rb.gravityScale;
+                rb.gravityScale = 0;
+                jumpTakeoff = Vector2.up;
+                float jumpSpeed;
+                //jumpSpeed = jumpTakeoff.y * apexHeight;
+                //jumpSpeed = jumpSpeed / apexTime;
+                //jumpSpeed *= Time.fixedDeltaTime;
+                //jumpTakeoff.y = jumpSpeed;
+            }
+            else
+            {
+            }
         }
-        else if (Input.GetKeyUp(KeyCode.Space))
+
+        if (!contact)
         {
-            jump = Vector2.zero;
-            jumpStart = Vector2.zero;
+            if (rb.velocity.y > 0)
+            {
+                if (rb.position.y >= jumpMax.y)
+                {
+                    rb.gravityScale = 1f;
+                }
+            }
         }
-        if (jump == Vector2.up && (rb.position.y >= (jumpStart.y + jumpHeight)))
-        {
-            jump = Vector2.zero;
-        }
-        jump = jump * Speed / 100 * Time.fixedDeltaTime;
+
+        //week 10 jumping code below week 11 in new method
+        ////houston we have reached mach 2 (i had velocity set to += instead of just equals)
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    jumpStart = rb.position;
+        //    jump = Vector2.up;
+        //}
+        //else if (Input.GetKeyUp(KeyCode.Space))
+        //{
+        //    jump = Vector2.zero;
+        //    jumpStart = Vector2.zero;
+        //}
+        //if (jump == Vector2.up && (rb.position.y >= (jumpStart.y + jumpHeight)))
+        //{
+        //    jump = Vector2.zero;
+        //}
+        //jump = jump * Speed / 100 * Time.fixedDeltaTime;
         //the below code ended up with a hilarious "inching forwards" type of effect
         //if (Input.GetKeyDown(KeyCode.A)) //moving left
         //{
@@ -81,7 +123,7 @@ public class PlayerController : MonoBehaviour
         //}
         //playerInput = playerInput * Speed * Time.fixedDeltaTime;
         //and now we put the jump and leftright together
-        playerInput = leftRight + jump;
+        playerInput = leftRight + jumpTakeoff;
         MovementUpdate(playerInput);
     }
 
@@ -102,14 +144,20 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    //this section is "Are ya touching something??"
-    private void OnCollisionEnter2D(Collision2D collision)
+    //this section is "Are ya touching the ground!???"
+    private void OnCollisionEnter2D(Collision2D other)
     {
-        contact = true;
+        if (other.gameObject.CompareTag("Ground"))
+        {
+            contact = true;
+        }
     }
-    private void OnCollisionExit2D(Collision2D collision)
+    private void OnCollisionExit2D(Collision2D other)
     {
-        contact = false;
+        if (other.gameObject.CompareTag("Ground"))
+        {
+            contact = false;
+        }
     }
 
     // this section is "well heres how you fall"
