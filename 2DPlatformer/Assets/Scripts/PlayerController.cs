@@ -20,10 +20,11 @@ public class PlayerController : MonoBehaviour
     Vector2 jumpMax;
     public GameObject testSquare;
     Rigidbody2D testDimention;
-    float gravityStore;
+    float gravityStore = 1f;
 
     public float apexHeight;
     public float apexTime;
+    public bool apexReached = false;
 
     // Start is called before the first frame update
     void Start()
@@ -36,7 +37,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        testDimention.velocity = Vector2.up;
+        testDimention.velocity = Vector2.zero;
         //The input from the player needs to be determined and then passed in the to the MovementUpdate which should
         //manage the actual movement of the character.
         Vector2 playerInput = new Vector2();
@@ -60,37 +61,40 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Space))
         {
+            jumpMax = new Vector2 (0, apexHeight);
+            jumpStart = rb.position;
+            jumpMax = jumpMax + jumpStart;
+            Debug.Log(jumpMax);
             if (contact)
             {
+                apexReached = false;
                 jumpStart = rb.transform.position;
-                jumpMax = new Vector2(jumpStart.x, jumpStart.y + apexHeight);
-                Debug.Log("Start at " + jumpStart + " End at " +  jumpMax);
-                gravityStore = rb.gravityScale;
-                rb.gravityScale = 0;
-                jumpTakeoff = Vector2.up;
-                float jumpSpeed;
-                //jumpSpeed = jumpTakeoff.y * apexHeight;
-                //jumpSpeed = jumpSpeed / apexTime;
-                //jumpSpeed *= Time.fixedDeltaTime;
-                //jumpTakeoff.y = jumpSpeed;
+                jumpMax = jumpStart + new Vector2(0, apexHeight);
+                float jumpVel = apexHeight / apexTime * Time.fixedDeltaTime;
+                jumpTakeoff = new Vector2(0, jumpVel);
+                rb.gravityScale = 0f;
             }
             else
             {
+
             }
         }
 
         if (!contact)
         {
-            if (rb.velocity.y > 0)
+            if ((jumpMax.y != 0) && jumpMax.y <= rb.position.y)
             {
-                if (rb.position.y >= jumpMax.y)
-                {
-                    rb.gravityScale = 1f;
-                }
+                apexReached = true;
             }
         }
 
-        //week 10 jumping code below week 11 in new method
+        if (apexReached)
+        {
+            rb.gravityScale = gravityStore;
+            jumpTakeoff = Vector2.zero;
+        }
+
+        //week 10 jumping code below
         ////houston we have reached mach 2 (i had velocity set to += instead of just equals)
         //if (Input.GetKeyDown(KeyCode.Space))
         //{
@@ -157,6 +161,7 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.CompareTag("Ground"))
         {
             contact = false;
+            apexReached = false;
         }
     }
 
